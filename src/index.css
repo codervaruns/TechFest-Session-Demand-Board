@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-2xl;
+  }
+  .glass-card-strong {
+    @apply bg-white/[0.07] backdrop-blur-2xl border border-white/[0.12] rounded-2xl shadow-2xl;
+  }
+  .glass-input {
+    @apply bg-white/[0.06] border border-white/[0.15] rounded-lg px-3 py-2 text-sm text-white
+           placeholder-white/30 outline-none transition-all duration-200
+           focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20 focus:bg-white/[0.08];
+  }
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200
+           bg-gradient-to-r from-cyan-500 to-blue-600 text-white
+           hover:from-cyan-400 hover:to-blue-500 hover:shadow-lg hover:shadow-cyan-500/25
+           active:scale-[0.97];
+  }
+  .btn-secondary {
+    @apply px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200
+           bg-white/[0.08] border border-white/[0.15] text-white/80
+           hover:bg-white/[0.12] hover:text-white
+           active:scale-[0.97];
+  }
+  .btn-danger {
+    @apply px-3 py-1.5 rounded-lg font-medium text-xs transition-all duration-200
+           bg-rose-500/15 border border-rose-500/30 text-rose-300
+           hover:bg-rose-500/25 hover:text-rose-200
+           active:scale-[0.97];
+  }
+  .btn-icon {
+    @apply p-1.5 rounded-lg transition-all duration-200
+           hover:bg-white/[0.1] text-white/40 hover:text-white/80
+           active:scale-[0.9];
+  }
+}
