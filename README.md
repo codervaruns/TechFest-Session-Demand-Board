@@ -39,8 +39,11 @@ This interactive dashboard allows organizers to monitor session popularity, trac
   - Pre-loaded sample dataset featuring clinic, workshop, critique, and debugging sessions.
   - Instant reset button to restore default demonstration state.
 
-- **Modern Glassmorphism UI**:
-  - Custom visual aesthetic with dynamic glow effects, translucent glass cards, backdrop blur filters, and dark mode palette.
+- **Modern Glassmorphism UI & Dual Theme Toggle**:
+  - Toggle seamlessly between **Dark Mode** and **Light Mode** using the header toggle button (`#theme-toggle-btn`).
+  - Persistent theme preference saved in `localStorage` (`techfest_theme`) with intelligent fallback to system preferences (`prefers-color-scheme`).
+  - Fluid 300ms CSS transitions for smooth theme switching without visual jumps.
+  - Custom glassmorphic design tailored for both dark (glowing deep slate glass) and light (soft translucent white cards with crisp slate typography) modes.
 
 ---
 
@@ -189,11 +192,12 @@ npm run lint
 ## 💻 Usage Guide
 
 1. **Viewing Initial Board**: Upon launch, default talks (`T01`-`T04`) and sample attendee interests (`A01`-`A08`) are loaded into the tables.
-2. **Adding a Talk**: Click the **"+ Add"** button in the Talks section header to launch the modal form. Provide ID, Name, Instances, and Seats/Instance.
-3. **Modifying Capacity**: Click the edit icon on any talk row to change its instances or seat count. Results will update instantly.
-4. **Recording Attendee Interest**: Click **"+ Add"** in the Interests section header to register an attendee's session preference.
-5. **Handling Errors**: If an invalid entry is created (e.g. referencing an invalid Talk ID or entering negative capacity), an error banner appears and results calculations pause safely until corrected.
-6. **Resetting Data**: Click **"Reset"** in the top navigation header at any time to revert back to default demo state.
+2. **Toggling Themes**: Click **"Light Mode"** or **"Dark Mode"** in the top navigation header (`#theme-toggle-btn`) to toggle visual themes. Your preference is automatically saved.
+3. **Adding a Talk**: Click the **"+ Add"** button in the Talks section header to launch the modal form. Provide ID, Name, Instances, and Seats/Instance.
+4. **Modifying Capacity**: Click the edit icon on any talk row to change its instances or seat count. Results will update instantly.
+5. **Recording Attendee Interest**: Click **"+ Add"** in the Interests section header to register an attendee's session preference.
+6. **Handling Errors**: If an invalid entry is created (e.g. referencing an invalid Talk ID or entering negative capacity), an error banner appears and results calculations pause safely until corrected.
+7. **Resetting Data**: Click **"Reset"** in the top navigation header at any time to revert back to default demo state.
 
 ---
 

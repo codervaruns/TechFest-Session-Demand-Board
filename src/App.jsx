@@ -177,7 +177,7 @@ function Modal({ title, children, onClose }) {
       onClick={onClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm transition-opacity duration-300" />
 
       {/* Modal card */}
       <div
@@ -185,7 +185,7 @@ function Modal({ title, children, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white">{title}</h2>
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">{title}</h2>
           <button
             onClick={onClose}
             className="btn-icon"
@@ -222,7 +222,7 @@ function TalkFormModal({ talk, onSave, onClose }) {
     <Modal title={talk ? 'Edit Talk' : 'Add Talk'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Talk ID</label>
+          <label className="block text-xs font-medium text-slate-500 dark:text-white/50 mb-1.5 uppercase tracking-wider">Talk ID</label>
           <input
             id="talk-id-input"
             className="glass-input w-full"
@@ -232,7 +232,7 @@ function TalkFormModal({ talk, onSave, onClose }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Talk Name</label>
+          <label className="block text-xs font-medium text-slate-500 dark:text-white/50 mb-1.5 uppercase tracking-wider">Talk Name</label>
           <input
             id="talk-name-input"
             className="glass-input w-full"
@@ -243,7 +243,7 @@ function TalkFormModal({ talk, onSave, onClose }) {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Instances</label>
+            <label className="block text-xs font-medium text-slate-500 dark:text-white/50 mb-1.5 uppercase tracking-wider">Instances</label>
             <input
               id="talk-instances-input"
               type="number"
@@ -254,7 +254,7 @@ function TalkFormModal({ talk, onSave, onClose }) {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Seats / Instance</label>
+            <label className="block text-xs font-medium text-slate-500 dark:text-white/50 mb-1.5 uppercase tracking-wider">Seats / Instance</label>
             <input
               id="talk-seats-input"
               type="number"
@@ -287,7 +287,7 @@ function InterestFormModal({ interest, onSave, onClose }) {
     <Modal title={interest ? 'Edit Interest' : 'Add Interest'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Attendee ID</label>
+          <label className="block text-xs font-medium text-slate-500 dark:text-white/50 mb-1.5 uppercase tracking-wider">Attendee ID</label>
           <input
             id="interest-attendee-input"
             className="glass-input w-full"
@@ -297,7 +297,7 @@ function InterestFormModal({ interest, onSave, onClose }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-white/50 mb-1.5 uppercase tracking-wider">Talk ID</label>
+          <label className="block text-xs font-medium text-slate-500 dark:text-white/50 mb-1.5 uppercase tracking-wider">Talk ID</label>
           <input
             id="interest-talk-input"
             className="glass-input w-full"
@@ -317,15 +317,30 @@ function InterestFormModal({ interest, onSave, onClose }) {
 
 function StatusBadge({ status }) {
   const config = {
-    OVER_CAPACITY: { bg: 'bg-rose-500/20', border: 'border-rose-500/40', text: 'text-rose-300', dot: 'bg-rose-400' },
-    FULL: { bg: 'bg-amber-500/20', border: 'border-amber-500/40', text: 'text-amber-300', dot: 'bg-amber-400' },
-    SPARE: { bg: 'bg-cyan-500/20', border: 'border-cyan-500/40', text: 'text-cyan-300', dot: 'bg-cyan-400' },
+    OVER_CAPACITY: {
+      bg: 'bg-rose-500/15 dark:bg-rose-500/20',
+      border: 'border-rose-500/30 dark:border-rose-500/40',
+      text: 'text-rose-700 dark:text-rose-300',
+      dot: 'bg-rose-500 dark:bg-rose-400',
+    },
+    FULL: {
+      bg: 'bg-amber-500/15 dark:bg-amber-500/20',
+      border: 'border-amber-500/30 dark:border-amber-500/40',
+      text: 'text-amber-800 dark:text-amber-300',
+      dot: 'bg-amber-500 dark:bg-amber-400',
+    },
+    SPARE: {
+      bg: 'bg-cyan-500/15 dark:bg-cyan-500/20',
+      border: 'border-cyan-500/30 dark:border-cyan-500/40',
+      text: 'text-cyan-800 dark:text-cyan-300',
+      dot: 'bg-cyan-500 dark:bg-cyan-400',
+    },
   };
   const c = config[status];
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${c.bg} ${c.border} ${c.text}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
-      {status}
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${c?.bg ?? ''} ${c?.border ?? ''} ${c?.text ?? ''}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${c?.dot ?? ''}`} />
+      {status ? status.replace(/_/g, ' ') : ''}
     </span>
   );
 }
@@ -343,11 +358,11 @@ function DemandBar({ demand, capacity, status }) {
 
   return (
     <div className="mt-1.5 mb-1">
-      <div className="relative h-2.5 bg-white/[0.06] rounded-full overflow-hidden">
+      <div className="relative h-2.5 bg-slate-200/80 dark:bg-white/[0.06] rounded-full overflow-hidden">
         {/* Capacity marker */}
         {capacity < max && (
           <div
-            className="absolute top-0 bottom-0 w-px bg-white/30 z-10"
+            className="absolute top-0 bottom-0 w-px bg-slate-400 dark:bg-white/30 z-10"
             style={{ left: `${capacityPct}%` }}
             title={`Capacity: ${capacity}`}
           />
@@ -358,7 +373,7 @@ function DemandBar({ demand, capacity, status }) {
           style={{ width: `${demandPct}%` }}
         />
       </div>
-      <div className="flex justify-between mt-0.5 text-[10px] text-white/30">
+      <div className="flex justify-between mt-0.5 text-[10px] text-slate-500 dark:text-white/30">
         <span>Demand: {demand}</span>
         <span>Cap: {capacity}</span>
       </div>
@@ -378,6 +393,30 @@ export default function App() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [modalState, setModalState] = useState(null); // { type, mode, index, data }
+
+  // ── Theme State & Sync ─────────────────────────────────────────────────────────
+
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('techfest_theme');
+    if (saved) return saved;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'dark';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('techfest_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // ── Live Validation & Calculation ─────────────────────────────────────────────
 
@@ -458,12 +497,16 @@ export default function App() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="relative min-h-screen text-slate-800 dark:text-white transition-colors duration-500 ease-in-out">
+      {/* Dual stacked background gradient layers for 100% smooth cross-fading in BOTH directions */}
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-100 via-slate-50 to-slate-200 pointer-events-none transition-opacity duration-500 ease-in-out opacity-100 dark:opacity-0" />
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pointer-events-none transition-opacity duration-500 ease-in-out opacity-0 dark:opacity-100" />
+
       {/* Decorative blobs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/[0.07] rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-purple-500/[0.05] rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 right-1/3 w-96 h-96 bg-rose-500/[0.05] rounded-full blur-3xl" />
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/[0.08] dark:bg-cyan-500/[0.07] rounded-full blur-3xl transition-opacity duration-500" />
+        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-purple-500/[0.08] dark:bg-purple-500/[0.05] rounded-full blur-3xl transition-opacity duration-500" />
+        <div className="absolute -bottom-40 right-1/3 w-96 h-96 bg-rose-500/[0.08] dark:bg-rose-500/[0.05] rounded-full blur-3xl transition-opacity duration-500" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -472,23 +515,60 @@ export default function App() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 dark:from-cyan-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                   TechFest
                 </span>{' '}
-                <span className="text-white/90">Session Demand Board</span>
+                <span className="text-slate-800 dark:text-white/90 transition-colors duration-500">Session Demand Board</span>
               </h1>
-              <p className="mt-1 text-sm text-white/40">
+              <p className="mt-1 text-sm text-slate-500 dark:text-white/40 transition-colors duration-500">
                 Track demand, capacity, and scheduling conflicts at a glance.
               </p>
             </div>
-            <button id="reset-btn" onClick={handleReset} className="btn-secondary">
-              <span className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Reset
-              </span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                id="theme-toggle-btn"
+                onClick={toggleTheme}
+                className="btn-secondary flex items-center gap-2 group transition-all duration-500"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                <div className="relative w-4 h-4 flex items-center justify-center">
+                  <svg
+                    className={`w-4 h-4 text-amber-400 absolute transition-all duration-500 ease-in-out transform ${
+                      theme === 'dark' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-50'
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                  <svg
+                    className={`w-4 h-4 text-indigo-600 absolute transition-all duration-500 ease-in-out transform ${
+                      theme === 'light' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-90 scale-50'
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                </div>
+                <span className="transition-colors duration-500 font-medium">
+                  {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                </span>
+              </button>
+              <button id="reset-btn" onClick={handleReset} className="btn-secondary">
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Reset
+                </span>
+              </button>
+            </div>
           </div>
         </header>
 
@@ -498,12 +578,12 @@ export default function App() {
             id="error-banner"
             className="mb-6 glass-card border-rose-500/40 bg-rose-500/10 px-5 py-4 flex items-start gap-3 animate-[fadeIn_0.2s_ease-out]"
           >
-            <svg className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-5 h-5 text-rose-500 dark:text-rose-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div>
-              <p className="font-semibold text-rose-300 text-sm">Validation Error</p>
-              <p className="text-rose-200/80 text-sm mt-0.5">{error}</p>
+              <p className="font-semibold text-rose-700 dark:text-rose-300 text-sm">Validation Error</p>
+              <p className="text-rose-600/90 dark:text-rose-200/80 text-sm mt-0.5">{error}</p>
             </div>
           </div>
         )}
@@ -515,12 +595,12 @@ export default function App() {
             {/* Talks Table */}
             <section className="glass-card p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-bold text-white/90 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <h2 className="text-base font-bold text-slate-800 dark:text-white/90 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                   Talks
-                  <span className="text-xs font-normal text-white/30 ml-1">({talks.length})</span>
+                  <span className="text-xs font-normal text-slate-400 dark:text-white/30 ml-1">({talks.length})</span>
                 </h2>
                 <button id="add-talk-btn" onClick={openAddTalk} className="btn-primary !px-3 !py-1.5 !text-xs">
                   + Add
@@ -529,7 +609,7 @@ export default function App() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-white/40 text-xs uppercase tracking-wider border-b border-white/[0.06]">
+                    <tr className="text-slate-400 dark:text-white/40 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-white/[0.06]">
                       <th className="text-left pb-2 pr-3 font-medium">#</th>
                       <th className="text-left pb-2 pr-3 font-medium">ID</th>
                       <th className="text-left pb-2 pr-3 font-medium">Name</th>
@@ -542,13 +622,13 @@ export default function App() {
                     {talks.map((talk, i) => (
                       <tr
                         key={talk._key}
-                        className="border-b border-white/[0.04] hover:bg-white/[0.03] transition-colors"
+                        className="border-b border-slate-100 dark:border-white/[0.04] hover:bg-slate-100/50 dark:hover:bg-white/[0.03] transition-colors"
                       >
-                        <td className="py-2.5 pr-3 text-white/20 text-xs">{i + 1}</td>
-                        <td className="py-2.5 pr-3 font-mono text-cyan-300/80 text-xs">{talk.id}</td>
-                        <td className="py-2.5 pr-3 text-white/80">{talk.name}</td>
-                        <td className="py-2.5 pr-3 text-center text-white/60">{talk.instances}</td>
-                        <td className="py-2.5 pr-3 text-center text-white/60">{talk.seats}</td>
+                        <td className="py-2.5 pr-3 text-slate-400 dark:text-white/20 text-xs">{i + 1}</td>
+                        <td className="py-2.5 pr-3 font-mono text-cyan-600 dark:text-cyan-300/80 text-xs">{talk.id}</td>
+                        <td className="py-2.5 pr-3 text-slate-700 dark:text-white/80 font-medium sm:font-normal">{talk.name}</td>
+                        <td className="py-2.5 pr-3 text-center text-slate-600 dark:text-white/60">{talk.instances}</td>
+                        <td className="py-2.5 pr-3 text-center text-slate-600 dark:text-white/60">{talk.seats}</td>
                         <td className="py-2.5 text-right">
                           <div className="flex justify-end gap-1">
                             <button
@@ -562,7 +642,7 @@ export default function App() {
                             </button>
                             <button
                               onClick={() => deleteTalk(i)}
-                              className="btn-icon text-rose-400/40 hover:text-rose-400"
+                              className="btn-icon text-rose-500/60 dark:text-rose-400/40 hover:text-rose-600 dark:hover:text-rose-400"
                               aria-label={`Delete talk ${talk.id}`}
                             >
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -575,7 +655,7 @@ export default function App() {
                     ))}
                     {talks.length === 0 && (
                       <tr>
-                        <td colSpan={6} className="py-8 text-center text-white/20 text-sm">
+                        <td colSpan={6} className="py-8 text-center text-slate-400 dark:text-white/20 text-sm">
                           No talks defined. Click "+ Add" to create one.
                         </td>
                       </tr>
@@ -588,12 +668,12 @@ export default function App() {
             {/* Interests Table */}
             <section className="glass-card p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-bold text-white/90 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <h2 className="text-base font-bold text-slate-800 dark:text-white/90 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                   Interests
-                  <span className="text-xs font-normal text-white/30 ml-1">({interests.length})</span>
+                  <span className="text-xs font-normal text-slate-400 dark:text-white/30 ml-1">({interests.length})</span>
                 </h2>
                 <button id="add-interest-btn" onClick={openAddInterest} className="btn-primary !px-3 !py-1.5 !text-xs">
                   + Add
@@ -601,8 +681,8 @@ export default function App() {
               </div>
               <div className="overflow-x-auto max-h-72 overflow-y-auto">
                 <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-slate-900/90 backdrop-blur-sm">
-                    <tr className="text-white/40 text-xs uppercase tracking-wider border-b border-white/[0.06]">
+                  <thead className="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm z-10">
+                    <tr className="text-slate-400 dark:text-white/40 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-white/[0.06]">
                       <th className="text-left pb-2 pr-3 font-medium">#</th>
                       <th className="text-left pb-2 pr-3 font-medium">Attendee</th>
                       <th className="text-left pb-2 pr-3 font-medium">Talk</th>
@@ -613,11 +693,11 @@ export default function App() {
                     {interests.map((interest, i) => (
                       <tr
                         key={interest._key}
-                        className="border-b border-white/[0.04] hover:bg-white/[0.03] transition-colors"
+                        className="border-b border-slate-100 dark:border-white/[0.04] hover:bg-slate-100/50 dark:hover:bg-white/[0.03] transition-colors"
                       >
-                        <td className="py-2 pr-3 text-white/20 text-xs">{i + 1}</td>
-                        <td className="py-2 pr-3 font-mono text-purple-300/80 text-xs">{interest.attendeeId}</td>
-                        <td className="py-2 pr-3 font-mono text-cyan-300/80 text-xs">{interest.talkId}</td>
+                        <td className="py-2 pr-3 text-slate-400 dark:text-white/20 text-xs">{i + 1}</td>
+                        <td className="py-2 pr-3 font-mono text-purple-600 dark:text-purple-300/80 text-xs">{interest.attendeeId}</td>
+                        <td className="py-2 pr-3 font-mono text-cyan-600 dark:text-cyan-300/80 text-xs">{interest.talkId}</td>
                         <td className="py-2 text-right">
                           <div className="flex justify-end gap-1">
                             <button
@@ -631,7 +711,7 @@ export default function App() {
                             </button>
                             <button
                               onClick={() => deleteInterest(i)}
-                              className="btn-icon text-rose-400/40 hover:text-rose-400"
+                              className="btn-icon text-rose-500/60 dark:text-rose-400/40 hover:text-rose-600 dark:hover:text-rose-400"
                               aria-label={`Delete interest row ${i + 1}`}
                             >
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -644,7 +724,7 @@ export default function App() {
                     ))}
                     {interests.length === 0 && (
                       <tr>
-                        <td colSpan={4} className="py-8 text-center text-white/20 text-sm">
+                        <td colSpan={4} className="py-8 text-center text-slate-400 dark:text-white/20 text-sm">
                           No interests defined. Click "+ Add" to create one.
                         </td>
                       </tr>
@@ -658,31 +738,29 @@ export default function App() {
           {/* ── Right Column: Results Board ──────────────────────────────────── */}
           <div>
             <section className="glass-card p-5 sticky top-8">
-              <h2 className="text-base font-bold text-white/90 flex items-center gap-2 mb-4">
-                <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <h2 className="text-base font-bold text-slate-800 dark:text-white/90 flex items-center gap-2 mb-4">
+                <svg className="w-5 h-5 text-amber-500 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
                 Results Board
               </h2>
-
-
 
               {results && (
                 <div className="space-y-5 animate-[fadeIn_0.3s_ease-out]">
                   {/* Status Count Pills */}
                   <div id="status-counts" className="flex flex-wrap gap-2">
                     {[
-                      { key: 'OVER_CAPACITY', label: 'Over', color: 'rose', icon: '🔴' },
-                      { key: 'FULL', label: 'Full', color: 'amber', icon: '🟡' },
-                      { key: 'SPARE', label: 'Spare', color: 'cyan', icon: '🟢' },
+                      { key: 'OVER_CAPACITY', label: 'Over', icon: '🔴' },
+                      { key: 'FULL', label: 'Full', icon: '🟡' },
+                      { key: 'SPARE', label: 'Spare', icon: '🟢' },
                     ].map(({ key, label, icon }) => (
                       <div
                         key={key}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.05] border border-white/[0.08]"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08]"
                       >
                         <span className="text-sm">{icon}</span>
-                        <span className="text-xs text-white/50">{label}</span>
-                        <span className="text-sm font-bold text-white/90">{statusCounts[key]}</span>
+                        <span className="text-xs text-slate-500 dark:text-white/50">{label}</span>
+                        <span className="text-sm font-bold text-slate-800 dark:text-white/90">{statusCounts[key]}</span>
                       </div>
                     ))}
                   </div>
@@ -692,13 +770,13 @@ export default function App() {
                     {results.map((r) => (
                       <div
                         key={r.talkId}
-                        className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-colors"
+                        className="p-4 rounded-xl bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06] hover:bg-slate-100/80 dark:hover:bg-white/[0.05] transition-colors"
                       >
                         <div className="flex items-start justify-between gap-3 mb-1">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs text-white/40">{r.talkId}</span>
-                              <span className="text-sm font-semibold text-white/90">{r.talkName}</span>
+                              <span className="font-mono text-xs text-slate-400 dark:text-white/40">{r.talkId}</span>
+                              <span className="text-sm font-semibold text-slate-800 dark:text-white/90">{r.talkName}</span>
                             </div>
                           </div>
                           <StatusBadge status={r.status} />
@@ -706,17 +784,17 @@ export default function App() {
 
                         <div className="grid grid-cols-3 gap-3 mt-2 text-center">
                           <div>
-                            <p className="text-[10px] text-white/30 uppercase tracking-wider">Demand</p>
-                            <p className="text-lg font-bold text-white/90">{r.demand}</p>
+                            <p className="text-[10px] text-slate-400 dark:text-white/30 uppercase tracking-wider">Demand</p>
+                            <p className="text-lg font-bold text-slate-800 dark:text-white/90">{r.demand}</p>
                           </div>
                           <div>
-                            <p className="text-[10px] text-white/30 uppercase tracking-wider">Capacity</p>
-                            <p className="text-lg font-bold text-white/90">{r.capacity}</p>
+                            <p className="text-[10px] text-slate-400 dark:text-white/30 uppercase tracking-wider">Capacity</p>
+                            <p className="text-lg font-bold text-slate-800 dark:text-white/90">{r.capacity}</p>
                           </div>
                           <div>
-                            <p className="text-[10px] text-white/30 uppercase tracking-wider">Delta</p>
+                            <p className="text-[10px] text-slate-400 dark:text-white/30 uppercase tracking-wider">Delta</p>
                             <p className={`text-lg font-bold ${
-                              r.delta > 0 ? 'text-rose-400' : r.delta === 0 ? 'text-amber-400' : 'text-cyan-400'
+                              r.delta > 0 ? 'text-rose-600 dark:text-rose-400' : r.delta === 0 ? 'text-amber-600 dark:text-amber-400' : 'text-cyan-600 dark:text-cyan-400'
                             }`}>
                               {r.delta > 0 ? '+' : ''}{r.delta}
                             </p>
@@ -734,7 +812,7 @@ export default function App() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-12 text-center text-xs text-white/15 pb-8">
+        <footer className="mt-12 text-center text-xs text-slate-400 dark:text-white/15 pb-8">
           TechFest Session Demand Board • Built with React + Tailwind CSS
         </footer>
       </div>
@@ -765,3 +843,4 @@ export default function App() {
     </div>
   );
 }
+
