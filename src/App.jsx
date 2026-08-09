@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // ─── Default Data ───────────────────────────────────────────────────────────────
 
@@ -379,10 +379,9 @@ export default function App() {
   const [error, setError] = useState(null);
   const [modalState, setModalState] = useState(null); // { type, mode, index, data }
 
-  // ── Actions ───────────────────────────────────────────────────────────────────
+  // ── Live Validation & Calculation ─────────────────────────────────────────────
 
-  const handleCalculate = () => {
-    // Strip internal keys before validation
+  useEffect(() => {
     const cleanTalks = talks.map(({ _key, ...rest }) => rest);
     const cleanInterests = interests.map(({ _key, ...rest }) => rest);
 
@@ -390,19 +389,18 @@ export default function App() {
     if (!validation.valid) {
       setError(validation.error);
       setResults(null);
-      return;
+    } else {
+      setError(null);
+      const raw = calculateResults(cleanTalks, cleanInterests);
+      setResults(sortResults(raw));
     }
+  }, [talks, interests]);
 
-    setError(null);
-    const raw = calculateResults(cleanTalks, cleanInterests);
-    setResults(sortResults(raw));
-  };
+  // ── Actions ───────────────────────────────────────────────────────────────────
 
   const handleReset = () => {
     setTalks(deepClone(DEFAULT_TALKS));
     setInterests(deepClone(DEFAULT_INTERESTS));
-    setResults(null);
-    setError(null);
   };
 
   // ── Talk CRUD ─────────────────────────────────────────────────────────────────
@@ -483,24 +481,14 @@ export default function App() {
                 Track demand, capacity, and scheduling conflicts at a glance.
               </p>
             </div>
-            <div className="flex gap-3">
-              <button id="calculate-btn" onClick={handleCalculate} className="btn-primary">
-                <span className="flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  Calculate Demand
-                </span>
-              </button>
-              <button id="reset-btn" onClick={handleReset} className="btn-secondary">
-                <span className="flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Reset
-                </span>
-              </button>
-            </div>
+            <button id="reset-btn" onClick={handleReset} className="btn-secondary">
+              <span className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset
+              </span>
+            </button>
           </div>
         </header>
 
@@ -675,16 +663,7 @@ export default function App() {
                 Results Board
               </h2>
 
-              {!results && !error && (
-                <div className="py-16 text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/[0.04] flex items-center justify-center">
-                    <svg className="w-8 h-8 text-white/15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <p className="text-white/25 text-sm">Click <span className="font-semibold text-white/40">"Calculate Demand"</span> to see results</p>
-                </div>
-              )}
+
 
               {results && (
                 <div className="space-y-5 animate-[fadeIn_0.3s_ease-out]">
