@@ -647,7 +647,7 @@ export default function App() {
                       <th className="text-left pb-2 pr-3 font-medium">ID</th>
                       <th className="text-left pb-2 pr-3 font-medium">Name</th>
                       <th className="text-center pb-2 pr-3 font-medium">Inst.</th>
-                      <th className="text-center pb-2 pr-3 font-medium">Seats</th>
+                      <th className="text-center pb-2 pr-3 font-medium">Seats/inst</th>
                       <th className="text-right pb-2 font-medium w-20">Actions</th>
                     </tr>
                   </thead>
