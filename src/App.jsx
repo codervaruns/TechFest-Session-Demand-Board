@@ -33,46 +33,52 @@ const DEFAULT_INTERESTS = [
 
 /**
  * Validates the talks array.
- * Returns { valid: true } or { valid: false, error: string }.
- * Stops at the first error found.
+ * Returns { valid: true, errors: [] } or { valid: false, errors: string[] }.
+ * Collects all validation errors across all talk rows.
  */
 function validateTalks(talks) {
+  const errors = [];
+
   for (let i = 0; i < talks.length; i++) {
     const talk = talks[i];
     const trimmedId = (talk.id ?? '').trim();
 
     // Blank talk ID
     if (trimmedId === '') {
-      return { valid: false, error: `INVALID_TALK — Row ${i + 1} has a blank Talk ID.` };
+      errors.push(`INVALID_TALK — Row ${i + 1} has a blank Talk ID.`);
     }
 
     // Duplicate talk ID (check against all previous talks)
-    for (let j = 0; j < i; j++) {
-      if ((talks[j].id ?? '').trim() === trimmedId) {
-        return { valid: false, error: `DUPLICATE_TALK_ID — "${trimmedId}" appears in rows ${j + 1} and ${i + 1}.` };
+    if (trimmedId !== '') {
+      for (let j = 0; j < i; j++) {
+        if ((talks[j].id ?? '').trim() === trimmedId) {
+          errors.push(`DUPLICATE_TALK_ID — "${trimmedId}" appears in rows ${j + 1} and ${i + 1}.`);
+          break;
+        }
       }
     }
 
     // Instances must be a positive integer
     if (!Number.isInteger(talk.instances) || talk.instances <= 0) {
-      return { valid: false, error: `INVALID_CAPACITY — Row ${i + 1} ("${trimmedId}"): instances must be a positive integer, got "${talk.instances}".` };
+      errors.push(`INVALID_CAPACITY — Row ${i + 1} ("${trimmedId || `Row ${i + 1}`}"): instances must be a positive integer, got "${talk.instances}".`);
     }
 
     // Seats must be a positive integer
     if (!Number.isInteger(talk.seats) || talk.seats <= 0) {
-      return { valid: false, error: `INVALID_CAPACITY — Row ${i + 1} ("${trimmedId}"): seats must be a positive integer, got "${talk.seats}".` };
+      errors.push(`INVALID_CAPACITY — Row ${i + 1} ("${trimmedId || `Row ${i + 1}`}"): seats must be a positive integer, got "${talk.seats}".`);
     }
   }
 
-  return { valid: true };
+  return { valid: errors.length === 0, errors };
 }
 
 /**
  * Validates the interests array against a set of known talk IDs.
- * Returns { valid: true } or { valid: false, error: string }.
- * Stops at the first error found.
+ * Returns { valid: true, errors: [] } or { valid: false, errors: string[] }.
+ * Collects all validation errors across all interest rows.
  */
 function validateInterests(interests, validTalkIds) {
+  const errors = [];
   const seen = new Set();
 
   for (let i = 0; i < interests.length; i++) {
@@ -82,38 +88,41 @@ function validateInterests(interests, validTalkIds) {
 
     // Blank attendee ID
     if (trimmedAttendee === '') {
-      return { valid: false, error: `INVALID_INTEREST — Row ${i + 1} has a blank Attendee ID.` };
+      errors.push(`INVALID_INTEREST — Row ${i + 1} has a blank Attendee ID.`);
     }
 
     // Duplicate (attendeeId, talkId) pair
-    const pairKey = `${trimmedAttendee}::${trimmedTalk}`;
-    if (seen.has(pairKey)) {
-      return { valid: false, error: `DUPLICATE_INTEREST — Row ${i + 1}: pair (${trimmedAttendee}, ${trimmedTalk}) already exists.` };
+    if (trimmedAttendee !== '' && trimmedTalk !== '') {
+      const pairKey = `${trimmedAttendee}::${trimmedTalk}`;
+      if (seen.has(pairKey)) {
+        errors.push(`DUPLICATE_INTEREST — Row ${i + 1}: pair (${trimmedAttendee}, ${trimmedTalk}) already exists.`);
+      } else {
+        seen.add(pairKey);
+      }
     }
-    seen.add(pairKey);
 
     // Unknown talk ID
-    if (!validTalkIds.has(trimmedTalk)) {
-      return { valid: false, error: `UNKNOWN_TALK — Row ${i + 1}: talk "${trimmedTalk}" does not exist in the Talks table.` };
+    if (trimmedTalk !== '' && !validTalkIds.has(trimmedTalk)) {
+      errors.push(`UNKNOWN_TALK — Row ${i + 1}: talk "${trimmedTalk}" does not exist in the Talks table.`);
     }
   }
 
-  return { valid: true };
+  return { valid: errors.length === 0, errors };
 }
 
 /**
- * Runs all validations in order: talks first, then interests.
- * Returns { valid: true } or { valid: false, error: string }.
+ * Runs all validations: talks first, then interests.
+ * Returns { valid: true, errors: [] } or { valid: false, errors: string[] }.
+ * Collects all validation errors across both tables.
  */
 function validateAll(talks, interests) {
   const talksResult = validateTalks(talks);
-  if (!talksResult.valid) return talksResult;
-
-  const validTalkIds = new Set(talks.map((t) => t.id.trim()));
+  const validTalkIds = new Set(talks.map((t) => (t.id ?? '').trim()).filter(Boolean));
   const interestsResult = validateInterests(interests, validTalkIds);
-  if (!interestsResult.valid) return interestsResult;
 
-  return { valid: true };
+  const errors = [...talksResult.errors, ...interestsResult.errors];
+
+  return { valid: errors.length === 0, errors };
 }
 
 // ─── Pure Calculation Functions ─────────────────────────────────────────────────
@@ -391,7 +400,7 @@ export default function App() {
   const [talks, setTalks] = useState(() => deepClone(DEFAULT_TALKS));
   const [interests, setInterests] = useState(() => deepClone(DEFAULT_INTERESTS));
   const [results, setResults] = useState(null);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState([]);
   const [modalState, setModalState] = useState(null); // { type, mode, index, data }
 
   // ── Theme State & Sync ─────────────────────────────────────────────────────────
@@ -426,10 +435,10 @@ export default function App() {
 
     const validation = validateAll(cleanTalks, cleanInterests);
     if (!validation.valid) {
-      setError(validation.error);
+      setErrors(validation.errors);
       setResults(null);
     } else {
-      setError(null);
+      setErrors([]);
       const raw = calculateResults(cleanTalks, cleanInterests);
       setResults(sortResults(raw));
     }
@@ -573,7 +582,7 @@ export default function App() {
         </header>
 
         {/* Error Banner */}
-        {error && (
+        {errors.length > 0 && (
           <div
             id="error-banner"
             className="mb-6 glass-card border-rose-500/40 bg-rose-500/10 px-5 py-4 flex items-start gap-3 animate-[fadeIn_0.2s_ease-out]"
@@ -581,9 +590,21 @@ export default function App() {
             <svg className="w-5 h-5 text-rose-500 dark:text-rose-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <div>
-              <p className="font-semibold text-rose-700 dark:text-rose-300 text-sm">Validation Error</p>
-              <p className="text-rose-600/90 dark:text-rose-200/80 text-sm mt-0.5">{error}</p>
+            <div className="w-full">
+              <p className="font-semibold text-rose-700 dark:text-rose-300 text-sm">
+                {errors.length === 1 ? 'Validation Error' : `Validation Errors (${errors.length})`}
+              </p>
+              {errors.length === 1 ? (
+                <p className="text-rose-600/90 dark:text-rose-200/80 text-sm mt-0.5">{errors[0]}</p>
+              ) : (
+                <ul className="mt-2 space-y-1.5 text-sm text-rose-600/90 dark:text-rose-200/80 list-disc list-inside">
+                  {errors.map((err, idx) => (
+                    <li key={idx} className="leading-snug">
+                      {err}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         )}

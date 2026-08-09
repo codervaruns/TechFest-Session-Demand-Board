@@ -29,7 +29,7 @@ This interactive dashboard allows organizers to monitor session popularity, trac
   - **Status Overview Pills**: Quick summary counter of sessions by status category.
 
 - **Strict Input Validation & Error Handling**:
-  - Real-time error detection with actionable feedback banners.
+  - Real-time error detection with actionable feedback banners displaying all validation errors simultaneously.
   - Prevents blank or duplicate Talk IDs.
   - Enforces positive integer constraints for instances and seat capacities.
   - Prevents duplicate attendee interest pairings.
