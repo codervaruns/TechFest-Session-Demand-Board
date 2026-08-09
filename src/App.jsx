@@ -530,6 +530,7 @@ export default function App() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-white/40 text-xs uppercase tracking-wider border-b border-white/[0.06]">
+                      <th className="text-left pb-2 pr-3 font-medium">#</th>
                       <th className="text-left pb-2 pr-3 font-medium">ID</th>
                       <th className="text-left pb-2 pr-3 font-medium">Name</th>
                       <th className="text-center pb-2 pr-3 font-medium">Inst.</th>
@@ -543,6 +544,7 @@ export default function App() {
                         key={talk._key}
                         className="border-b border-white/[0.04] hover:bg-white/[0.03] transition-colors"
                       >
+                        <td className="py-2.5 pr-3 text-white/20 text-xs">{i + 1}</td>
                         <td className="py-2.5 pr-3 font-mono text-cyan-300/80 text-xs">{talk.id}</td>
                         <td className="py-2.5 pr-3 text-white/80">{talk.name}</td>
                         <td className="py-2.5 pr-3 text-center text-white/60">{talk.instances}</td>
@@ -573,7 +575,7 @@ export default function App() {
                     ))}
                     {talks.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="py-8 text-center text-white/20 text-sm">
+                        <td colSpan={6} className="py-8 text-center text-white/20 text-sm">
                           No talks defined. Click "+ Add" to create one.
                         </td>
                       </tr>
