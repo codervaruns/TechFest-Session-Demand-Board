@@ -103,7 +103,7 @@ function validateInterests(interests, validTalkIds) {
 
     // Unknown talk ID
     if (trimmedTalk !== '' && !validTalkIds.has(trimmedTalk)) {
-      errors.push(`UNKNOWN_TALK — Row ${i + 1}: talk "${trimmedTalk}" does not exist in the Talks table.`);
+      errors.push(`UNKNOWN_TALK — Row ${i + 1}: attendee "${trimmedAttendee}" registered for unknown talk "${trimmedTalk}".`);
     }
   }
 
@@ -427,11 +427,11 @@ export default function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // ── Live Validation & Calculation ─────────────────────────────────────────────
+  // ── Calculation Action ─────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const cleanTalks = talks.map(({ _key, ...rest }) => rest);
-    const cleanInterests = interests.map(({ _key, ...rest }) => rest);
+  const handleCalculate = (currentTalks = talks, currentInterests = interests) => {
+    const cleanTalks = currentTalks.map(({ _key, ...rest }) => rest);
+    const cleanInterests = currentInterests.map(({ _key, ...rest }) => rest);
 
     const validation = validateAll(cleanTalks, cleanInterests);
     if (!validation.valid) {
@@ -442,13 +442,15 @@ export default function App() {
       const raw = calculateResults(cleanTalks, cleanInterests);
       setResults(sortResults(raw));
     }
-  }, [talks, interests]);
+  };
 
   // ── Actions ───────────────────────────────────────────────────────────────────
 
   const handleReset = () => {
     setTalks(deepClone(DEFAULT_TALKS));
     setInterests(deepClone(DEFAULT_INTERESTS));
+    setErrors([]);
+    setResults(null);
   };
 
   // ── Talk CRUD ─────────────────────────────────────────────────────────────────
@@ -568,6 +570,16 @@ export default function App() {
                 <span className="transition-colors duration-500 font-medium">
                   {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                 </span>
+              </button>
+              <button
+                id="calculate-btn"
+                onClick={() => handleCalculate()}
+                className="btn-primary flex items-center gap-2 shadow-md hover:shadow-cyan-500/25 transition-all duration-300 font-semibold"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                Calculate Demand
               </button>
               <button id="reset-btn" onClick={handleReset} className="btn-secondary">
                 <span className="flex items-center gap-2">
@@ -766,7 +778,7 @@ export default function App() {
                 Results Board
               </h2>
 
-              {results && (
+              {results ? (
                 <div className="space-y-5 animate-[fadeIn_0.3s_ease-out]">
                   {/* Status Count Pills */}
                   <div id="status-counts" className="flex flex-wrap gap-2">
@@ -826,6 +838,14 @@ export default function App() {
                       </div>
                     ))}
                   </div>
+                </div>
+              ) : (
+                <div className="py-12 px-4 text-center border-2 border-dashed border-slate-200/80 dark:border-white/10 rounded-2xl animate-[fadeIn_0.2s_ease-out]">
+                  <svg className="w-10 h-10 mx-auto text-slate-300 dark:text-white/20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <p className="text-sm font-medium text-slate-600 dark:text-white/50">No demand results computed</p>
+                  <p className="text-xs text-slate-400 dark:text-white/30 mt-1">Click "Calculate Demand" to run validations and view metrics.</p>
                 </div>
               )}
             </section>

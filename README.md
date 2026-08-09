@@ -140,7 +140,7 @@ $$\text{Status}(t) = \begin{cases} \text{OVER\_CAPACITY} & \text{if } Delta(t) >
 | `INVALID_CAPACITY` | `instances` or `seats` is non-integer or $\le 0$ | `INVALID_CAPACITY — Row 1 ("T01"): instances must be a positive integer, got "0".` |
 | `INVALID_INTEREST` | Attendee ID is blank | `INVALID_INTEREST — Row 2 has a blank Attendee ID.` |
 | `DUPLICATE_INTEREST` | Duplicate `(attendeeId, talkId)` pair exists | `DUPLICATE_INTEREST — Row 4: pair (A01, T01) already exists.` |
-| `UNKNOWN_TALK` | `talkId` does not match any entry in Talks table | `UNKNOWN_TALK — Row 5: talk "T99" does not exist in the Talks table.` |
+| `UNKNOWN_TALK` | `talkId` does not match any entry in Talks table | `UNKNOWN_TALK — Row 5: attendee "A01" registered for unknown talk "T99".` |
 
 ---
 
@@ -194,10 +194,10 @@ npm run lint
 1. **Viewing Initial Board**: Upon launch, default talks (`T01`-`T04`) and sample attendee interests (`A01`-`A08`) are loaded into the tables.
 2. **Toggling Themes**: Click **"Light Mode"** or **"Dark Mode"** in the top navigation header (`#theme-toggle-btn`) to toggle visual themes. Your preference is automatically saved.
 3. **Adding a Talk**: Click the **"+ Add"** button in the Talks section header to launch the modal form. Provide ID, Name, Instances, and Seats/Instance.
-4. **Modifying Capacity**: Click the edit icon on any talk row to change its instances or seat count. Results will update instantly.
-5. **Recording Attendee Interest**: Click **"+ Add"** in the Interests section header to register an attendee's session preference.
-6. **Handling Errors**: If an invalid entry is created (e.g. referencing an invalid Talk ID or entering negative capacity), an error banner appears and results calculations pause safely until corrected.
-7. **Resetting Data**: Click **"Reset"** in the top navigation header at any time to revert back to default demo state.
+4. **Modifying Data**: Add, edit, or delete talks and interests using the respective table actions.
+5. **Calculating Demand**: Click **"Calculate Demand"** (`#calculate-btn`) in the top navigation header to run validations and recompute board results manually.
+6. **Handling Errors**: If an invalid entry exists (e.g. referencing an invalid Talk ID or entering negative capacity), an error banner appears displaying validation messages with attendee and talk details.
+7. **Resetting Data**: Click **"Reset"** in the top navigation header at any time to revert back to default demo state and recalculate metrics.
 
 ---
 
